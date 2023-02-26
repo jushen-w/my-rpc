@@ -1,6 +1,10 @@
 package rpc;
 
 import com.wjs.rpc.dto.RpcReq;
+import com.wjs.rpc.dto.RpcResp;
+import com.wjs.rpc.enumeration.ExceptionCode;
+import com.wjs.rpc.enumeration.StatusCode;
+import com.wjs.rpc.exception.RpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +22,13 @@ public class RpcClient {
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             objectOutputStream.writeObject(rpcRequest);
             objectOutputStream.flush();
-            return objectInputStream.readObject();
+            RpcResp resp =(RpcResp) objectInputStream.readObject();
+            if (resp == null || resp.getStatusCode() == null || resp.getStatusCode() != StatusCode.SUCCESS.getCode())
+                throw new RpcException(ExceptionCode.INVOCATION_FAILED, "{" + rpcRequest.getInterfaceName() + ": " + rpcRequest.getMethodName() +  "}");
+            return resp.getData();
         } catch (IOException | ClassNotFoundException e) {
             logger.error("ERROR: ", e);
-            return null;
+            throw new RpcException(ExceptionCode.INVOCATION_FAILED, e);
         }
     }
 }

@@ -1,7 +1,12 @@
 ## Modules
-- common: Request/Response objects.
-- service: Remote services.
-- server: server-side.
-- client: client-side.
+- common
+  - Request/Response objects
+  - Defines exceptions, status code.
+- service
+  - Remote service interfaces.
+- server
+  - Receive requests from the client, execute the method, response.
+  - Unit tests.
+- client
+  - Send requests to the server.
 
-### V1
